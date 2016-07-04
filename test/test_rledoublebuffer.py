@@ -3,12 +3,10 @@
 from myhdl import block, StopSimulation
 from myhdl import ResetSignal, Signal, instance
 from myhdl.conversion import verify
-from rhea import Global
 
 from jpegenc.subblocks.RLE.RleDoubleFifo.rledoublebuffer import DoubleFifoBus
 from jpegenc.subblocks.RLE.RleDoubleFifo.rledoublebuffer import rledoublefifo
 
-from common import BufferConstants
 from common import tbclock, reset_on_start, resetonstart
 
 
@@ -17,17 +15,19 @@ def test_doublebuffer():
 
     @block
     def bench_doublebuffer():
+        """We check the module with test inputs here"""
 
         # buffer constant for depth of fifo's and data width
-        buffer_constants = BufferConstants(20, 64)
-
+        width_depth = 64
         clock = Signal(bool(0))
         reset = ResetSignal(0, active=1, async=True)
 
         # instantiation of fifo-bus, clock and rledoublefifo
-        dfifo_bus = DoubleFifoBus(buffer_constants.width)
-        inst = rledoublefifo(buffer_constants, reset, clock, dfifo_bus)
+        dfifo_bus = DoubleFifoBus(width=20)
+        inst = rledoublefifo(clock, reset, dfifo_bus, width_depth)
         inst_clock = tbclock(clock)
+
+        assert isinstance(dfifo_bus, DoubleFifoBus)
 
         @instance
         def tbstim():
@@ -157,20 +157,22 @@ def test_doublebuffer_conversion():
 
     @block
     def bench_doublebuffer_conversion():
-        """ test bench """
-        buffer_constants = BufferConstants(20, 64)
+        """ test bench for conversion purpose"""
 
         clock = Signal(bool(0))
         reset = ResetSignal(0, active=1, async=True)
+        width_depth = 64
+        dfifo_bus = DoubleFifoBus(width=20)
 
-        dfifo_bus = DoubleFifoBus(buffer_constants.width)
+        assert isinstance(dfifo_bus, DoubleFifoBus)
 
-        inst = rledoublefifo(buffer_constants, reset, clock, dfifo_bus)
+        inst = rledoublefifo(clock, reset, dfifo_bus, width_depth)
         inst_clock = tbclock(clock)
         inst_reset = resetonstart(clock, reset)
 
         @instance
         def tbstim():
+            """dummy inputs given here"""
 
             yield clock.posedge
             print ("Conversion done!!")

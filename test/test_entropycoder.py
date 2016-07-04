@@ -11,23 +11,23 @@ from common import resetonstart
 def test_entropycoder():
     """We will test the functionality of entropy coder in this block"""
 
-    # constants for size required and width of input data
-    width = 12
-    size_data = (numofbits(width-1))
+    # constants for size required and width_data of input data
+    width_data = 12
+    width_size = (numofbits(width_data-1))
 
     clock = Signal(bool(0))
     reset = ResetSignal(0, active=True, async=True)
 
     # input data to the block
-    data_in = Signal(intbv(0)[(width+1):].signed())
+    data_in = Signal(intbv(0)[(width_data+1):].signed())
 
     # output data from the block
-    size = Signal(intbv(0)[size_data:])
-    amplitude = Signal(intbv(0)[(width+1):].signed())
+    size = Signal(intbv(0)[width_size:])
+    amplitude = Signal(intbv(0)[(width_data+1):].signed())
 
     @block
     def bench_entropycoder():
-        inst = entropycoder(width, clock, reset, data_in, size, amplitude)
+        inst = entropycoder(width_data, clock, reset, data_in, size, amplitude)
         inst_clock = tbclock(clock)
 
         @instance
@@ -37,7 +37,7 @@ def test_entropycoder():
 
             yield reset_on_start(clock, reset)
 
-            for i in range(-2**(width-1), 2**(width-1), 1):
+            for i in range(-2**(width_data-1), 2**(width_data-1), 1):
                 data_in.next = i
                 yield clock.posedge
                 yield clock.posedge
@@ -59,17 +59,17 @@ def test_entropycoder():
 def test_block_conversion():
     """Test bench used for conversion purpose"""
 
-    width = 12
-    size_data = int(numofbits(width-1))
+    width_data = 12
+    width_size = int(numofbits(width_data-1))
     clock = Signal(bool(0))
     reset = ResetSignal(0, active=True, async=True)
-    data_in = Signal(intbv(0)[(width+1):].signed())
-    size = Signal(intbv(0)[size_data:])
-    amplitude = Signal(intbv(0)[(width+1):].signed())
+    data_in = Signal(intbv(0)[(width_data+1):].signed())
+    size = Signal(intbv(0)[width_size:])
+    amplitude = Signal(intbv(0)[(width_data+1):].signed())
 
     @block
     def bench_entropycoder():
-        inst = entropycoder(width, clock, reset, data_in, size, amplitude)
+        inst = entropycoder(width_data, clock, reset, data_in, size, amplitude)
         inst_clock = tbclock(clock)
         inst_reset = resetonstart(clock, reset)
 
