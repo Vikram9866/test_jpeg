@@ -8,31 +8,31 @@ def two2bin(num):
     return inum + 1
 
 
-def nbits(num, width):
+def nbits(num, width_data):
     """returns the number of bits required to store num"""
-    i = width - 1
+    i = width_data - 1
     while i >= 0:
         if num[i] == 1:
             return i + 1
         i = i - 1
-    return num[width]
+    return num[width_data]
 
 
 @block
-def entropycoder(width, clock, reset, data_in, size, amplitude):
+def entropycoder(width_data, clock, reset, data_in, size, amplitude):
     """returns the amplitude of input and number of bits required to store the input """
 
     @always_seq(clock.posedge, reset=reset)
     def logic():
         """sequential block that finds amplitude and num of bits"""
-        if data_in[width] == 0:
+        if data_in[width_data] == 0:
             amplitude.next = data_in
-            size.next = nbits(data_in, width)
+            size.next = nbits(data_in, width_data)
 
         else:
             amplitude.next = data_in - 1
-            absval = intbv(0)[(width):0]
+            absval = intbv(0)[(width_data):0]
             absval[:] = two2bin(data_in)
-            size.next = nbits(absval, width)
+            size.next = nbits(absval, width_data)
 
     return logic
