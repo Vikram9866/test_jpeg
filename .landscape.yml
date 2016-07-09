@@ -1,8 +1,0 @@
-
-doc-warnings: yes
-strictness: high
-autodetect: yes
-ignore-paths:
-  - hdl/jpegenc_v2/myhdl
-python-targets:
-  - 3
